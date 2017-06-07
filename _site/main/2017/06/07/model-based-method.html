@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <head>
+  <meta charset="UTF-8">
+  <title>Reinforcement Learning</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/cayman.css">
+</head>
+
+  <body>
+    <section class="page-header">
+  <h1 class="project-name">Reinforcement Learning</h1>
+  <h2 class="project-tagline"></h2>
+  <a href="#" class="btn">View on GitHub</a>
+  <a href="#" class="btn">Download .zip</a>
+  <a href="#" class="btn">Download .tar.gz</a>
+</section>
+
+    <section class="main-content">
+      
+      <h2>Model-based Method</h2>
+<p class="meta">07 Jun 2017</p>
+
+<p>As mentioned in <a href="/main/2017/06/07/shortest-path-problem.html">Shortest Path</a>
+previously, we want to find a optimal policy, so our agent can get much more rewards and few penalty. This policy is acquired by the interaction of the agent with environment. As the agent works, we should use the feedbacks to extract the policy informations as we can. For it we need a mechanism to describes how a state good or bad for the agent is. In other words, what penalty informations exist at states in environment. This policy is given described by the <strong>value function</strong> accordingly. Let’s clarify the definition of policy. A policy is <strong>mapping</strong> from each state <script type="math/tex">s \in S</script>, and action <script type="math/tex">a \in A</script>, to the probability <script type="math/tex">\pi(s,a)</script> of taking action <script type="math/tex">a</script> in state <script type="math/tex">s</script>. So the value function of a state <script type="math/tex">s</script> under a policy <script type="math/tex">\pi</script> denoted as <script type="math/tex">v_{\pi(s)}</script> is a expected return when agent starts from <script type="math/tex">s</script> and follows the policy <script type="math/tex">\pi</script> over times. In MDPs the <strong>value state function</strong> for policy <script type="math/tex">\pi</script> is defined as</p>
+
+<script type="math/tex; mode=display">v_{\pi(s)} = \mathbb{E}\left[ G_t|S_t = s \right] = \mathbb{E}_{\pi} \left[ \sum_{k=0}^{\infty} \gamma^{k} R_{k+t+1} | S_t =s \right]</script>
+
+<p>The <strong>Optimal policy</strong> is defined as:
+<script type="math/tex">v_\star(s)= \sum_{a} \pi(a|s) \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma v_\pi(s^\prime) \right]</script>,</p>
+
+<p>where <script type="math/tex">G_t</script> is the return in <script type="math/tex">s_t</script> and <script type="math/tex">\gamma</script> the discount rate, which means how much contribute of the future state will be considered in calculating the current state value. This is equation is so-called <strong><script type="math/tex">\color{red}{Bellman\ Equation}</script></strong>. It reflects the relation between the value of state and its successor state. For iterations we can use <strong>back-up</strong> to make it easier to understand. The 
+Backup for <script type="math/tex">v_\pi</script> and <script type="math/tex">q_\pi</script> is represented as:
+<img src="/assets/backup.png" alt="Back-up diagram" class="center-image scale-image" /></p>
+
+<p>The solid circles mean the state-action pair and empty circles mean state. What Bellman Operator shows us is that the value in state <script type="math/tex">s</script> is the weighted sum (the second sum operator in equation) of all successor state by the probability of occurring (the first sum operator).<br />
+Correspondingly the Q-value of a state <script type="math/tex">s</script> taking an action <script type="math/tex">a</script> under policy <script type="math/tex">\pi</script> is defined as:
+<script type="math/tex">q_\pi(s,a) = \mathbb{E}\left[ G_t|S_t = s, A_t = a \right]</script>
+<script type="math/tex">= \mathbb{E}_\pi \left[ \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}|S_t = s, A_t = a \right]</script></p>
+
+<script type="math/tex; mode=display">=\sum_{s^\prime}p(s^\prime|s, a) \left[ r(s,a,s^\prime) + \gamma q_\pi(s^\prime, a^\prime) \right]</script>
+
+<p><script type="math/tex">q_\star(s,a) = \sum_{s^\prime}p(s^\prime|s, a) \left[ r(s,a,s^\prime) + \gamma \max_{a^\prime}q_\star(s^\prime, a^\prime) \right],</script>
+which is called <strong>action  value  function</strong> for policy <script type="math/tex">\pi</script>.</p>
+
+<p>The goal is to finding the optimal policy that the corresponding function can be maximized greedily. Once the optimal value function is determined, it’s easy to get optimal policy.</p>
+
+<p>As so far we give an explanation why do we need value function or action value function, in following section I’ll show some concrete algorithms for investigating the optimal policy. All of them share the same property: they are all <strong>tabular methods</strong>. It means all the state values are stored temporally in tabular data structure.</p>
+
+<h1>Policy Iteration</h1>
+
+<p>Policy Iteration (PI) is dynamic programming operator, it’s shown in the following Fig. 
+<img src="/assets/pi.png" alt="Policy iteration" class="center-image scale-image" /></p>
+
+<p>The given policy will be at first evaluated in a very simple way: for <script type="math/tex">s \in \mathcal{S}</script>, the current state value is backed up. In current state <script type="math/tex">s</script> its new state value function<br />
+<script type="math/tex">v(s)\leftarrow \sum_{s^\prime}p(s^\prime|s,\pi(s)) \left[ r(s, \pi(s), s^\pi) + \gamma v(s^\prime) \right]</script></p>
+
+<p>will be iteratively calculated.  After it the difference of two function value at current state <script type="math/tex">s</script> will be compared with some given accuracy parameters till it converges. In policy improvement we select the action that maximizes the current state value like
+<script type="math/tex">\pi(s) \leftarrow \underset{a}{\operatorname{argmax}} \sum_{s^\prime} p(s^\prime|s,a) \left[ r(s, a,s^\prime) + \gamma v(s^\prime) \right]</script>.</p>
+
+<p>This process repeats iteratively till the whole policy iteration converges. This methods converges in few iterations. But the protracted policy evaluation needs to sweep all next states to evaluate all states. From this point we have Value Iteration.</p>
+
+<h1>Value Iteration</h1>
+<p>Value Iteration (VI) is a improvement of PI that merges the policy evaluation and improvement in single operator. Just like PI does, it first computer new state value for the current by sweeping all possible successor states. Then it always selects the action that maximizes the current state value. In other words it’s much more greedier than PI. Here we have 3x4 grid world, where “start” indicates the beginning state of this episodic task. 
+<img src="/assets/vi.png" alt="Value Iteration" class="center-image scale-image" />
+<img src="/assets/qvalue.png" alt="Q Value Iteration" class="center-image scale-image" /></p>
+
+<p>There are two absorb state, where the agent will get positive and negative rewards separately. As the Fig. above shows, VI always selects the action in the current iterations that enables the agent get much more rewards. The cell <script type="math/tex">3\times2</script> is much nearer to terminal state <script type="math/tex">3\times4</script> than start state <script type="math/tex">3\times1</script>, but after learning we still found that it’s better from state <script type="math/tex">3\times2</script>  to <script type="math/tex">3\times1</script>, then go along the direction arrows show to the terminal state.</p>
+
+<p>Either PI and VI has the character in common that they assume the dynamic of the current environment is available. It means i.e. in the grid world the transition probability from each state to its successor state is given. In real word sometimes it’s either expensive to get this dynamics or it’s impossible to get those things. In the following section the samples-based algorithm will be represented.</p>
+
+
+      <footer class="site-footer">
+  <span class="site-footer-owner"><a href="http://localhost:4000">Reinforcement Learning</a> is maintained by <a href="https://github.com/keeperovswords">Jian Xi</a>.</span>
+  <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+</footer>
+
+
+    </section>
+
+  </body>
+</html>

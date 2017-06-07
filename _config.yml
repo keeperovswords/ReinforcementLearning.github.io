@@ -1,0 +1,22 @@
+
+
+# Site settings
+title: Reinforcement Learning
+email: keeperovsword@gmail.com
+description: > # this means to ignore newlines until "baseurl:"
+  The introduction of all basic algorithms in reinforcement learning.
+  Keyword: Robotics, Optimal Control, Function Approximation
+baseurl: "" 
+url:     "" 
+
+author:
+  name:       Jian Xi
+  url:        https://github.com/keeperovswords
+
+# Build settings
+markdown: kramdown
+theme: minima
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
