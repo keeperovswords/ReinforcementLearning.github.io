@@ -14,7 +14,7 @@ $$v_\star(s)= \sum_{a} \pi(a|s) \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^
 
 where $$G_t$$ is the return in $$s_t$$ and $$\gamma$$ the discount rate, which means how much contribute of the future state will be considered in calculating the current state value. This is equation is so-called <strong>$$\color{red}{Bellman\ Equation}$$</strong>. It reflects the relation between the value of state and its successor state. For iterations we can use <strong>back-up</strong> to make it easier to understand. The 
 Backup for $$v_\pi$$ and $$q_\pi$$ is represented as:
-![Back-up diagram](/assets/backup.png){: .center-image }{: .scale-image}
+![Back-up diagram]({{ site.url }}/assets/backup.png){: .center-image }{: .scale-image}
 
 The solid circles mean the state-action pair and empty circles mean state. What Bellman Operator shows us is that the value in state $$s$$ is the weighted sum (the second sum operator in equation) of all successor state by the probability of occurring (the first sum operator).  
 Correspondingly the Q-value of a state $$s$$ taking an action $$a$$ under policy $$\pi$$ is defined as:
@@ -33,7 +33,7 @@ As so far we give an explanation why do we need value function or action value f
 <h1>Policy Iteration</h1>
 
 Policy Iteration (PI) is dynamic programming operator, it's shown in the following Fig. 
-![Policy iteration](/assets/pi.png){: .center-image }{: .scale-image}
+![Policy iteration]({{ site.url }}/assets/pi.png){: .center-image }{: .scale-image}
 
 The given policy will be at first evaluated in a very simple way: for $$s \in \mathcal{S}$$, the current state value is backed up. In current state $$s$$ its new state value function  
 $$v(s)\leftarrow \sum_{s^\prime}p(s^\prime|s,\pi(s)) \left[ r(s, \pi(s), s^\pi) + \gamma v(s^\prime) \right] $$
@@ -46,8 +46,8 @@ This process repeats iteratively till the whole policy iteration converges. This
 
 <h1>Value Iteration</h1>
 Value Iteration (VI) is a improvement of PI that merges the policy evaluation and improvement in single operator. Just like PI does, it first computer new state value for the current by sweeping all possible successor states. Then it always selects the action that maximizes the current state value. In other words it's much more greedier than PI. Here we have 3x4 grid world, where "start" indicates the beginning state of this episodic task. 
-![Value Iteration](/assets/vi.png){: .center-image }{: .scale-image}
-![Q Value Iteration](/assets/qvalue.png){: .center-image }{: .scale-image}
+![Value Iteration]({{ site.url }}/assets/vi.png){: .center-image }{: .scale-image}
+![Q Value Iteration]({{ site.url }}/assets/qvalue.png){: .center-image }{: .scale-image}
 
 There are two absorb state, where the agent will get positive and negative rewards separately. As the Fig. above shows, VI always selects the action in the current iterations that enables the agent get much more rewards. The cell $$3\times2$$ is much nearer to terminal state $$3\times4$$ than start state $$3\times1$$, but after learning we still found that it's better from state $$3\times2$$  to $$3\times1$$, then go along the direction arrows show to the terminal state.
 
