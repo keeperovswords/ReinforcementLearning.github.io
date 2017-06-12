@@ -10,7 +10,7 @@ As so far, either [Model-based Methods]({{ site.baseurl }}{% post_url 2017-06-07
 <h1>Eligibility Traces</h1>
 What's eligibility traces? To answer this question, we can glance the two different views of eligibility traces. From mechanistic view, be short, it's a extra tracing information with that the learner learns much more effectively than the general methods, this mechanistic view is also noted as <strong>backward view</strong>, depicted in the following figure.
 <div class="fig figcenter fighighlight">
-  <img src="{{ site.github.url }}/assets/backwardview.png" width="60%">
+  <img src="/assets/backwardview.png" width="60%">
   <div class="figcaption">The mechanistic view of eligibility traces</div>
 </div>
 
