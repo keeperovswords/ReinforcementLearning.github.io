@@ -25,8 +25,8 @@ Q-Learning is another kind of TD-Learning. It approximates the optimal $$q_\star
 
 
 <div class="fig figcenter fighighlight">
-  <img src="/assets/qlearner.png" width="50%">
-  <img src="/assets/qlearner_eps.png" width="50%">
+  <img src="{{ site.github.url }}/assets/qlearner.png" width="50%">
+  <img src="{{ site.github.url }}/assets/qlearner_eps.png" width="50%">
   <div class="figcaption"><b>Top:</b>Q-learning without exploration <b>Bottom:</b> Q-learning with epsilon-greedy policy</div>
 </div>
 
@@ -37,7 +37,7 @@ As it shows, the action value of states are totally different after 100 iteratio
 
 With exploration the Q-learning enables us to using the interaction with environment to stretch the optimal policy. But there are still polish points can be found in Q-learning. The Q-learner always back propagates the value state information or shortest path information from current state to the state where it comes from, as depicted as Fig.:
 <div class="fig figcenter fighighlight">
-  <img src="/assets/qpropagation.png" width="50%">
+  <img src="{{ site.github.url }}/assets/qpropagation.png" width="50%">
   <div class="figcaption">Q-leaner propagates the "shortest path information" back each time at one time step </div>
 </div>
 Actually we know from which states we get the current state implictly, so we can use this information to make Q-learning much effective? In next section we will find an answer for it.

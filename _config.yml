@@ -8,7 +8,7 @@ description: > # this means to ignore newlines until "baseurl:"
   Keyword: Robotics, Optimal Control, Function Approximation
 baseurl: "" 
 url:     "" 
-#https://github.com/keeperovswords/ReinforcementLearning.github.io
+
 author:
   name:       Jian Xi
   url:        https://github.com/keeperovswords
@@ -20,10 +20,4 @@ theme: minima
 exclude:
   - Gemfile
   - Gemfile.lock
-  
-  
-#defaults:
-#  - scope:
-#      path: "assets"
-#    values:
-#      image: true
+
