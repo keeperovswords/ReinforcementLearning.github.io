@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-12T16:34:20+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-12T16:40:00+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
 </subtitle><author><name>Jian Xi</name></author><entry><title type="html">Sample-based Method</title><link href="http://localhost:4000/main/2017/06/07/sample-based-method.html" rel="alternate" type="text/html" title="Sample-based Method" /><published>2017-06-07T17:21:22+02:00</published><updated>2017-06-07T17:21:22+02:00</updated><id>http://localhost:4000/main/2017/06/07/sample-based-method</id><content type="html" xml:base="http://localhost:4000/main/2017/06/07/sample-based-method.html">&lt;h1&gt;Aside&lt;/h1&gt;
 &lt;p&gt;In contrast to &lt;a href=&quot;/main/2017/06/07/model-based-method.html&quot;&gt;Model-based Methods&lt;/a&gt; such as PI and VI , in this part the &lt;strong&gt;Model Free Methods &lt;/strong&gt;will be considered. For some case we don’t know the dynamics of our environment. It’s better we just interact with the environment to find the control policy.&lt;/p&gt;
 
@@ -37,7 +37,7 @@ As it shows, the action value of states are totally different after 100 iteratio
 &lt;h1&gt;Eligibility Traces&lt;/h1&gt;
 &lt;p&gt;What’s eligibility traces? To answer this question, we can glance the two different views of eligibility traces. From mechanistic view, be short, it’s a extra tracing information with that the learner learns much more effectively than the general methods, this mechanistic view is also noted as &lt;strong&gt;backward view&lt;/strong&gt;, depicted in the following figure.&lt;/p&gt;
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
-  &lt;img src=&quot;/assets/backwardview.png&quot; width=&quot;60%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/backwardview.png&quot; width=&quot;60%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;The mechanistic view of eligibility traces&lt;/div&gt;
 &lt;/div&gt;
 
@@ -74,7 +74,7 @@ previously, we want to find a optimal policy, so our agent can get much more rew
 &lt;p&gt;where &lt;script type=&quot;math/tex&quot;&gt;G_t&lt;/script&gt; is the return in &lt;script type=&quot;math/tex&quot;&gt;s_t&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;\gamma&lt;/script&gt; the discount rate, which means how much contribute of the future state will be considered in calculating the current state value. This is equation is so-called &lt;strong&gt;&lt;script type=&quot;math/tex&quot;&gt;\color{red}{Bellman\ Equation}&lt;/script&gt;&lt;/strong&gt;. It reflects the relation between the value of state and its successor state. For iterations we can use &lt;strong&gt;back-up&lt;/strong&gt; to make it easier to understand. The 
 Backup for &lt;script type=&quot;math/tex&quot;&gt;v_\pi&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;q_\pi&lt;/script&gt; is represented as:&lt;/p&gt;
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
-  &lt;img src=&quot;/assets/backup.png&quot; width=&quot;50%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/backup.png&quot; width=&quot;50%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;Back-up diagram at states&lt;/div&gt;
 &lt;/div&gt;
 
@@ -96,7 +96,7 @@ which is called &lt;strong&gt;action  value  function&lt;/strong&gt; for policy 
 
 &lt;p&gt;Policy Iteration (PI) is dynamic programming operator, it’s shown in the following Fig.&lt;/p&gt;
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
-  &lt;img src=&quot;/assets/pi.png&quot; width=&quot;25%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/pi.png&quot; width=&quot;25%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;Policy Iteration&lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;The given policy will be at first evaluated in a very simple way: for &lt;script type=&quot;math/tex&quot;&gt;s \in \mathcal{S}&lt;/script&gt;, the current state value is backed up. In current state &lt;script type=&quot;math/tex&quot;&gt;s&lt;/script&gt; its new state value function&lt;br /&gt;
@@ -110,8 +110,8 @@ which is called &lt;strong&gt;action  value  function&lt;/strong&gt; for policy 
 &lt;h1&gt;Value Iteration&lt;/h1&gt;
 &lt;p&gt;Value Iteration (VI) is a improvement of PI that merges the policy evaluation and improvement in single operator. Just like PI does, it first computer new state value for the current by sweeping all possible successor states. Then it always selects the action that maximizes the current state value. In other words it’s much more greedier than PI. Here we have 3x4 grid world, where “start” indicates the beginning state of this episodic task.&lt;/p&gt;
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
-  &lt;img src=&quot;/assets/vi.png&quot; width=&quot;50%&quot; /&gt;
-  &lt;img src=&quot;/assets/qvalue.png&quot; width=&quot;50%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/vi.png&quot; width=&quot;50%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/qvalue.png&quot; width=&quot;50%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;&lt;b&gt;Top:&lt;/b&gt; An example of value iteration afeter 10 iterations. &lt;b&gt;Bottom:&lt;/b&gt; The corresponding q values after 10 iterations.&lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;There are two absorb state, where the agent will get positive and negative rewards separately. As the Fig. above shows, VI always selects the action in the current iterations that enables the agent get much more rewards. The cell &lt;script type=&quot;math/tex&quot;&gt;3\times2&lt;/script&gt; is much nearer to terminal state &lt;script type=&quot;math/tex&quot;&gt;3\times4&lt;/script&gt; than start state &lt;script type=&quot;math/tex&quot;&gt;3\times1&lt;/script&gt;, but after learning we still found that it’s better from state &lt;script type=&quot;math/tex&quot;&gt;3\times2&lt;/script&gt;  to &lt;script type=&quot;math/tex&quot;&gt;3\times1&lt;/script&gt;, then go along the direction arrows show to the terminal state.&lt;/p&gt;

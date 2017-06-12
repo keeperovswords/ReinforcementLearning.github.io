@@ -15,7 +15,7 @@ $$v_\star(s)= \sum_{a} \pi(a|s) \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^
 where $$G_t$$ is the return in $$s_t$$ and $$\gamma$$ the discount rate, which means how much contribute of the future state will be considered in calculating the current state value. This is equation is so-called <strong>$$\color{red}{Bellman\ Equation}$$</strong>. It reflects the relation between the value of state and its successor state. For iterations we can use <strong>back-up</strong> to make it easier to understand. The 
 Backup for $$v_\pi$$ and $$q_\pi$$ is represented as:
 <div class="fig figcenter fighighlight">
-  <img src="/assets/backup.png" width="50%">
+  <img src="{{ site.github.url }}/assets/backup.png" width="50%">
   <div class="figcaption">Back-up diagram at states</div>
 </div>
 
@@ -37,7 +37,7 @@ As so far we give an explanation why do we need value function or action value f
 
 Policy Iteration (PI) is dynamic programming operator, it's shown in the following Fig. 
 <div class="fig figcenter fighighlight">
-  <img src="/assets/pi.png" width="25%">
+  <img src="{{ site.github.url }}/assets/pi.png" width="25%">
   <div class="figcaption">Policy Iteration</div>
 </div>
 The given policy will be at first evaluated in a very simple way: for $$s \in \mathcal{S}$$, the current state value is backed up. In current state $$s$$ its new state value function  
@@ -52,8 +52,8 @@ This process repeats iteratively till the whole policy iteration converges. This
 <h1>Value Iteration</h1>
 Value Iteration (VI) is a improvement of PI that merges the policy evaluation and improvement in single operator. Just like PI does, it first computer new state value for the current by sweeping all possible successor states. Then it always selects the action that maximizes the current state value. In other words it's much more greedier than PI. Here we have 3x4 grid world, where "start" indicates the beginning state of this episodic task. 
 <div class="fig figcenter fighighlight">
-  <img src="/assets/vi.png" width="50%">
-  <img src="/assets/qvalue.png" width="50%">
+  <img src="{{ site.github.url }}/assets/vi.png" width="50%">
+  <img src="{{ site.github.url }}/assets/qvalue.png" width="50%">
   <div class="figcaption"><b>Top:</b> An example of value iteration afeter 10 iterations. <b>Bottom:</b> The corresponding q values after 10 iterations.</div>
 </div>
 There are two absorb state, where the agent will get positive and negative rewards separately. As the Fig. above shows, VI always selects the action in the current iterations that enables the agent get much more rewards. The cell $$3\times2$$ is much nearer to terminal state $$3\times4$$ than start state $$3\times1$$, but after learning we still found that it's better from state $$3\times2$$  to $$3\times1$$, then go along the direction arrows show to the terminal state.
