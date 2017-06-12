@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-12T16:04:43+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-12T16:12:39+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
 </subtitle><author><name>Jian Xi</name></author><entry><title type="html">Sample-based Method</title><link href="http://localhost:4000/main/2017/06/07/sample-based-method.html" rel="alternate" type="text/html" title="Sample-based Method" /><published>2017-06-07T17:21:22+02:00</published><updated>2017-06-07T17:21:22+02:00</updated><id>http://localhost:4000/main/2017/06/07/sample-based-method</id><content type="html" xml:base="http://localhost:4000/main/2017/06/07/sample-based-method.html">&lt;h1&gt;Aside&lt;/h1&gt;
 &lt;p&gt;In contrast to &lt;a href=&quot;/main/2017/06/07/model-based-method.html&quot;&gt;Model-based Methods&lt;/a&gt; such as PI and VI , in this part the &lt;strong&gt;Model Free Methods &lt;/strong&gt;will be considered. For some case we don’t know the dynamics of our environment. It’s better we just interact with the environment to find the control policy.&lt;/p&gt;
 
@@ -37,7 +37,7 @@ As it shows, the action value of states are totally different after 100 iteratio
 &lt;h1&gt;Eligibility Traces&lt;/h1&gt;
 &lt;p&gt;What’s eligibility traces? To answer this question, we can glance the two different views of eligibility traces. From mechanistic view, be short, it’s a extra tracing information with that the learner learns much more effectively than the general methods, this mechanistic view is also noted as &lt;strong&gt;backward view&lt;/strong&gt;, depicted in the following figure.&lt;/p&gt;
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
-  &lt;img src=&quot;/assets/backwardview.png&quot; width=&quot;60%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/backwardview.png&quot; width=&quot;60%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;The mechanistic view of eligibility traces&lt;/div&gt;
 &lt;/div&gt;
 
@@ -47,7 +47,7 @@ As it shows, the action value of states are totally different after 100 iteratio
 
 &lt;p&gt;Meanwhile the counter of state be accessed will be updated. After it all the state value of each state will be updated with considering the &lt;script type=&quot;math/tex&quot;&gt;\delta&lt;/script&gt; and eligibility variable will be also discounted by the discount factor and eligibility factor &lt;script type=&quot;math/tex&quot;&gt;\lambda&lt;/script&gt;. Once the agent reaches a terminal state or a state with high reward, then this information will be back propagated towards to all the state in terms of the &lt;script type=&quot;math/tex&quot;&gt;\lambda&lt;/script&gt; eligibility trace.  Almost every TD-method can be combined with eligibility trace to work better. The another view is the theoretic view, also as &lt;strong&gt;forward view&lt;/strong&gt; noted and depicted in Figure:&lt;/p&gt;
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
-  &lt;img src=&quot;/assets/forwardview.png&quot; width=&quot;60%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/forwardview.png&quot; width=&quot;60%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;The theoretic view of eligibility traces.&lt;/div&gt;
 &lt;/div&gt;
 
