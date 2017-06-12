@@ -7,7 +7,7 @@ description: > # this means to ignore newlines until "baseurl:"
   The introduction of all basic algorithms in reinforcement learning.
   Keyword: Robotics, Optimal Control, Function Approximation
 baseurl: "" 
-url:     "" 
+url:     "https://github.com/keeperovswords/ReinforcementLearning.github.io" 
 
 author:
   name:       Jian Xi

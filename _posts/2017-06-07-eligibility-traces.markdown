@@ -10,7 +10,7 @@ As so far, either [Model-based Methods]({{ site.baseurl }}{% post_url 2017-06-07
 <h1>Eligibility Traces</h1>
 What's eligibility traces? To answer this question, we can glance the two different views of eligibility traces. From mechanistic view, be short, it's a extra tracing information with that the learner learns much more effectively than the general methods, this mechanistic view is also noted as <strong>backward view</strong>, depicted in the following figure.
 <div class="fig figcenter fighighlight">
-  <img src="/assets/backwardview.png" width="60%">
+  <img src="{{ site.github.url }}/assets/backwardview.png" width="60%">
   <div class="figcaption">The mechanistic view of eligibility traces</div>
 </div>
 
@@ -20,7 +20,7 @@ $$\delta_t = r + \gamma V(s^\prime) - V(s)$$
 
 Meanwhile the counter of state be accessed will be updated. After it all the state value of each state will be updated with considering the $$\delta$$ and eligibility variable will be also discounted by the discount factor and eligibility factor $$\lambda$$. Once the agent reaches a terminal state or a state with high reward, then this information will be back propagated towards to all the state in terms of the $$\lambda$$ eligibility trace.  Almost every TD-method can be combined with eligibility trace to work better. The another view is the theoretic view, also as <strong>forward view</strong> noted and depicted in Figure:
 <div class="fig figcenter fighighlight">
-  <img src="/assets/forwardview.png" width="60%">
+  <img src="{{ site.github.url }}/assets/forwardview.png" width="60%">
   <div class="figcaption">The theoretic view of eligibility traces.</div>
 </div>
 
