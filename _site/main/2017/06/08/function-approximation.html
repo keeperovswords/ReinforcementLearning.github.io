@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <head>
+  <meta charset="UTF-8">
+  <title>Reinforcement Learning</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/cayman.css">
+</head>
+
+  <body>
+    <section class="page-header">
+  <h1 class="project-name">Reinforcement Learning</h1>
+  <h2 class="project-tagline"></h2>
+  <!--
+  <a href="#" class="btn">View on GitHub</a>
+  <a href="#" class="btn">Download .zip</a>
+  <a href="#" class="btn">Download .tar.gz</a>
+  -->
+</section>
+
+    <section class="main-content">
+      
+      <h2>Function Approximation</h2>
+<p class="meta">08 Jun 2017</p>
+
+<h1>Function Approximation</h1>
+<p>As in <a href="/main/2017/06/07/sample-based-method.html">Sample-based Methods</a> showed, the Q-learning can be used to learn a policy in a grid (or finite) world. It can also be ued in computer games or even some complicated task i.g. robotic navigation etc. What we met as so far is just the limit state space problem. For iterative updating it still needs much resource for calculating and for storing the state-action information. What if we have a continuous problem, then your table for DP updating will be exploded expanded. In pacman we used some features to learn the weight of each state action pair. These features are game based properties. Says how many pills you have or how far away you stand from ghost etc. If the feature has a very tiny change, but it will still be considered as different state as used before. Can we abstract this slightly changed information and handle them as maybe same states? With function approximation we’ll find a solution.</p>
+
+<h2>Feature Representation</h2>
+
+<p>Features are some sort of abstract of states in reinforcement learning tasks. It’s quite critical that how you extract features. If you create the feature in a very good way, the approximation results will be very explainable. There are various kinds of feature representing approaches. The most simple one is <strong>look-up table</strong> method. This method generates the feature for all states equally to one. As its simplicity it has presents a very poor representative ability for approximation. Another choice for generating feature is called <strong>tile-coding</strong>. Assume the state space spreads in a two dimensional space. The receptive field of features are grouped into partitions in this input space. Each partition is called <strong>tiling</strong>, here the big retangles as depicted in Fig.</p>
+<div class="fig figcenter fighighlight">
+  <img src="http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/teilcoding.png" width="30%" />
+  <div class="figcaption">Feature generation by using teil-coding</div>
+</div>
+<p>Here we used six tilings. Each small cell is noted as <strong>tile</strong>. The size of cell implies the resolution of final approximation. As the tiling moves up and down, each cell will covered by the tilings. The different indexes of each tiling is then combined as feature vector. This approach is easy to implement and good at continuous tasks. For instance in the mountain-car problem, the car’s position and velocity can be represented in this state space. So we just move the tilings for getting the approximated features. There are also some coding-based approaches such as <strong>coarse coding</strong> or <strong>Kanerva coding</strong> and <strong>RBF</strong>. Those I’ve not used yet. Here I used the hand-crafted features that depends on the game itself very tightly. The representative ability of features depends on how many aspects you are going to take into account. This is really problem oriented features.  Pacman game looks like in following Fig.</p>
+<div class="fig figcenter fighighlight">
+  <img src="http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/pacmanqlearner.png" width="30%" />
+  <div class="figcaption">Pacman snapshot</div>
+</div>
+
+<p>The rules are quite simple in pacman game: you should control the pacman to collect pills as much as you can to get a higher score and avoide your pacman from hunting by the ghosts. There are at least one ghost which try to hunt you. There are also some power pills that enable you to eat the ghosts. What you need to do is running for points and avoiding from ghosts.</p>
+
+<h2>Linear Function Approximation</h2>
+<p>In function approximation schema we don’t use the state directly, instead we use the feature-based state representation information, so the states can be represented as feature vectors. Each element of this vector represents a special feature in game state, such as the distance to ghost,  number of ghost etc. Under this settings we can rewrite our state value or action value function as:
+\begin{equation}
+\begin{split}
+Q(s,a) &amp;= w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a) <br />
+&amp;= \sum_{i=1}^{n} w_i f_i(s,a) <br />
+v(s) &amp;= \sum_{i=1}^{n} w_i f_i(s)<br />
+\end{split} 
+\end{equation}
+In the normal Q-learning the action value in state <script type="math/tex">s</script> with action <script type="math/tex">a</script> updated as <script type="math/tex">Q(s,a) \leftarrow Q(s,a) + \alpha \times \delta</script>,where <script type="math/tex">\delta</script> the temporal different defined as <script type="math/tex">\delta = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right] - Q(s,a)</script>. In the linear <script type="math/tex">Q</script>-function the update step of <script type="math/tex">Q(s,a)</script> is considered as updating the corresponding weight <script type="math/tex">w_i \leftarrow w_i + \alpha \times \delta \times f_i(s,a)</script>. This problem is actually a <strong>linear Regression </strong>problem: we have the target value 
+<script type="math/tex">Q(s,a) = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right]</script>, 
+the estimated value 	<script type="math/tex">Q(s,a) = \sum_{k}w_k f_k(s,a)</script>. The total error can be defined as
+\begin{equation}
+\Delta = \sum_{i}\left(q_i - \tilde{q_i}\right)^2 =  \sum_{i}\left(q_i - \sum_{k}w_k f_k(s,a)\right)^2.
+\end{equation}
+So the error will be minimized by gradient descent:
+\begin{equation}
+\nabla_{w_m} \Delta = \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2 =  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)
+= w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
+\end{equation}
+In pacman the features as we said can be the distance from agent to ghost, or the number of power pills, or the panic time of ghost etc.  Here we used there relative features: the distance to pill, the distance to ghost and a bias. After 1000 iterations training, it got the 98<script type="math/tex">\%</script> times to win the game. 
+Linear function approximation works quit well in this case. What if we have much more complicated features that have high dimensions. It’s not a good choice to optimize this problem by yourself. There are many solvers can be used for optimizing problems.In next section the  convex optimization solver <strong>CVX</strong> will be introduced.</p>
+
+<h2>Approximate Linear Programming</h2>
+<p>CVX is a modeling system for constructing and solving disciplined programs such as linear and quadratic programs, second-order cone programs. The usage of CVX is very user-friendly. What need to be at first initialized by you is to form your problem into a convex problem. Convex problem means the problem involved can be optimized (minimized) over a convex sets, further information see in section Optimization. CVX can be integrated either in Matlab or Python. In the following code pieces we used CVX to solving the linear equation <script type="math/tex">\mathbf{Ax=b}</script>.</p>
+
+<figure class="highlight"><pre><code class="language-matlab" data-lang="matlab"><span class="c1">% declare variable </span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="n">A</span> <span class="o">=</span> <span class="nb">randn</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">);</span> <span class="n">b</span> <span class="o">=</span> <span class="nb">randn</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+<span class="c1">% using CVX</span>
+<span class="n">cvx_begin</span>
+  <span class="c1">% define a affine variable in CVX</span>
+  <span class="n">variable</span> <span class="n">x2</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		    
+  <span class="c1">% minimize the euclidean distance</span>
+  <span class="n">minimize</span><span class="p">(</span> <span class="nb">norm</span><span class="p">(</span> <span class="n">A</span> <span class="o">*</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">b</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
+<span class="n">cvx_end</span></code></pre></figure>
+
+<p>With keyword <script type="math/tex">cvx\_begin</script> the cvx body begins, in its body all the necessary variables will be declared by using <script type="math/tex">variable</script> keyword. After declaring we you intend to do then with <script type="math/tex">cvx\_end</script> close the syntax definition. This procedure will be  automatically invoked by Matlab or Python.</p>
+
+<p>Let’s go back to our VI and see how it’ll be solved by CVX. In VI we solve the Bellman equation in the following way:
+\begin{equation}
+V(s)=  \max_a \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right], \text{for } \forall s.
+\end{equation}
+This equality (or <script type="math/tex">\max</script> operator ) is nonlinear, so we can relax this problem
+by introducing constrains. If we have a look at the Eq. above, it’s actually the equivalent to:
+\begin{equation}
+V(s) \ge \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right], \text{for } \forall s,a.
+\end{equation}
+Hence we can solve VI by solving 
+\begin{equation}
+\min d^T V s.t. \forall s, a: V(s)\ge \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right],
+\end{equation}
+where <script type="math/tex">d</script> is a arbitrary vector. This is the relaxing process. Let <script type="math/tex">T</script> stands for the Bellman operator, this VI equation can be simplified as
+\begin{equation}
+\min d^T V s.t. V \ge TV,
+\end{equation}
+For a  feasible solution of this constrained optimization, we have <script type="math/tex">V \ge TV</script>. Bellman operator itself is monotonic operator, it means <script type="math/tex">V_1 \ge V_2 \implies TV_1 \ge TV_2</script>. So it works also out for the optimal policy:
+\begin{equation}
+TV \ge T(TV) \ge T(T(TV))  = T^3 V \dots \implies V \ge TV \ge T^2 V \ge \dots \ge TV = V_\star.
+\end{equation}
+This equality means after iterations the feasible regions of relaxed VI  is  compacted  repeatedly and we’ll then get the optimal policy this way. So we can find <script type="math/tex">V_\star</script> by solving the following linear program:
+\begin{equation}
+\min_V d^T V \ s.t. V \ge TV,
+\end{equation}
+We used CVX to solve this equation, the result is the same as we did in <a href="/main/2017/06/07/model-based-method.html">Model-based Methods</a>. Below shows the outputs of CVX after successfully sovled our value iteration problem:</p>
+<div class="fig figcenter fighighlight">
+  <img src="http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/cvxvi.png" width="75%" />
+  <div class="figcaption">The result of CVX for solving VI</div>
+</div>
+
+<p>Let’s continuously go along this way straight to find the approximate linear programming. In linear function approximation settings the state value is represented by a linear combination of its features and the weight of features correspondingly. As it changes, so the VI function has been also changed accordingly:
+\begin{equation}
+\min_{V,r} {d}^T  {\phi} {r} \ s.t. {\phi r} \ge T ({\phi r}), \ V = {\phi r}
+\end{equation}
+After all substitutions we got this optimization problem:
+\begin{equation}
+	\begin{split}
+		\min_r \sum_{s\in S}d(s) \sum_{i}\phi_i(s) r_i <br />
+		s.t. \forall s \in S, a: <br />
+	\end{split}
+\end{equation}</p>
+
+<p>\begin{equation}
+\sum_{i}\phi_i(s) r_i \ge \sum_{s^\prime} p(s^\prime|s, a)\left[ r(s, a,s^\prime) + \gamma \sum_{j} \phi_j(s^\prime) r_j \right]
+\end{equation}</p>
+
+<p>That’s the basic idea of finding a optimal policy in a finite state problem by using approximate linear programming. It works sometime astonishing good and sometiem quite in opposite. The feature extract plays a critical role.</p>
+
+
+      <footer class="site-footer">
+  <span class="site-footer-owner"><a href="http://localhost:4000">Reinforcement Learning</a> is maintained by <a href="https://github.com/keeperovswords">Jian Xi</a>.</span>
+  <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+</footer>
+
+
+    </section>
+
+  </body>
+</html>

@@ -46,8 +46,8 @@
 <p>Q-Learning is another kind of TD-Learning. It approximates the optimal <script type="math/tex">q_\star</script> directly by learning the action value function independent the policy being followed. So it’s an off-policy TD control approach. As we said, the most amazing part or TD is it benefits one side from MC-method, it also bootstrap itself by considering the past experiences. Therefore there are two sides should be considered accordingly, the exploration and the exploitation. Exploration focus much more on to explore the unknown states, whereas exploitation thinks much heavily about using the current estimates greedily. For exploration we have i.g. <script type="math/tex">\epsilon-</script> greedy policy. With given exploration probability <script type="math/tex">\epsilon</script> we select some action in current state randomly and with <script type="math/tex">1-\epsilon</script> we just follow the current policy. In an non-deterministic MDPs play the noise a critical role. Noise means how uncertain than the agent gets a successor state after taking an action in current state. When the noise is quite big in your environment, it’d be quite if you use a better exploration policy.</p>
 
 <div class="fig figcenter fighighlight">
-  <img src="/assets/qlearner.png" width="50%" />
-  <img src="/assets/qlearner_eps.png" width="50%" />
+  <img src="http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/qlearner.png" width="50%" />
+  <img src="http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/qlearner_eps.png" width="50%" />
   <div class="figcaption"><b>Top:</b>Q-learning without exploration <b>Bottom:</b> Q-learning with epsilon-greedy policy</div>
 </div>
 
@@ -56,7 +56,7 @@ As it shows, the action value of states are totally different after 100 iteratio
 
 <p>With exploration the Q-learning enables us to using the interaction with environment to stretch the optimal policy. But there are still polish points can be found in Q-learning. The Q-learner always back propagates the value state information or shortest path information from current state to the state where it comes from, as depicted as Fig.:</p>
 <div class="fig figcenter fighighlight">
-  <img src="/assets/qpropagation.png" width="50%" />
+  <img src="http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/qpropagation.png" width="50%" />
   <div class="figcaption">Q-leaner propagates the "shortest path information" back each time at one time step </div>
 </div>
 <p>Actually we know from which states we get the current state implictly, so we can use this information to make Q-learning much effective? In next section we will find an answer for it.</p>

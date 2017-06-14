@@ -1,5 +1,111 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-12T16:43:00+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
-</subtitle><author><name>Jian Xi</name></author><entry><title type="html">Sample-based Method</title><link href="http://localhost:4000/main/2017/06/07/sample-based-method.html" rel="alternate" type="text/html" title="Sample-based Method" /><published>2017-06-07T17:21:22+02:00</published><updated>2017-06-07T17:21:22+02:00</updated><id>http://localhost:4000/main/2017/06/07/sample-based-method</id><content type="html" xml:base="http://localhost:4000/main/2017/06/07/sample-based-method.html">&lt;h1&gt;Aside&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-14T09:51:42+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
+</subtitle><author><name>Jian Xi</name></author><entry><title type="html">Function Approximation</title><link href="http://localhost:4000/main/2017/06/08/function-approximation.html" rel="alternate" type="text/html" title="Function Approximation" /><published>2017-06-08T21:15:24+02:00</published><updated>2017-06-08T21:15:24+02:00</updated><id>http://localhost:4000/main/2017/06/08/function-approximation</id><content type="html" xml:base="http://localhost:4000/main/2017/06/08/function-approximation.html">&lt;h1&gt;Function Approximation&lt;/h1&gt;
+&lt;p&gt;As in &lt;a href=&quot;/main/2017/06/07/sample-based-method.html&quot;&gt;Sample-based Methods&lt;/a&gt; showed, the Q-learning can be used to learn a policy in a grid (or finite) world. It can also be ued in computer games or even some complicated task i.g. robotic navigation etc. What we met as so far is just the limit state space problem. For iterative updating it still needs much resource for calculating and for storing the state-action information. What if we have a continuous problem, then your table for DP updating will be exploded expanded. In pacman we used some features to learn the weight of each state action pair. These features are game based properties. Says how many pills you have or how far away you stand from ghost etc. If the feature has a very tiny change, but it will still be considered as different state as used before. Can we abstract this slightly changed information and handle them as maybe same states? With function approximation we’ll find a solution.&lt;/p&gt;
+
+&lt;h2&gt;Feature Representation&lt;/h2&gt;
+
+&lt;p&gt;Features are some sort of abstract of states in reinforcement learning tasks. It’s quite critical that how you extract features. If you create the feature in a very good way, the approximation results will be very explainable. There are various kinds of feature representing approaches. The most simple one is &lt;strong&gt;look-up table&lt;/strong&gt; method. This method generates the feature for all states equally to one. As its simplicity it has presents a very poor representative ability for approximation. Another choice for generating feature is called &lt;strong&gt;tile-coding&lt;/strong&gt;. Assume the state space spreads in a two dimensional space. The receptive field of features are grouped into partitions in this input space. Each partition is called &lt;strong&gt;tiling&lt;/strong&gt;, here the big retangles as depicted in Fig.&lt;/p&gt;
+&lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/teilcoding.png&quot; width=&quot;30%&quot; /&gt;
+  &lt;div class=&quot;figcaption&quot;&gt;Feature generation by using teil-coding&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Here we used six tilings. Each small cell is noted as &lt;strong&gt;tile&lt;/strong&gt;. The size of cell implies the resolution of final approximation. As the tiling moves up and down, each cell will covered by the tilings. The different indexes of each tiling is then combined as feature vector. This approach is easy to implement and good at continuous tasks. For instance in the mountain-car problem, the car’s position and velocity can be represented in this state space. So we just move the tilings for getting the approximated features. There are also some coding-based approaches such as &lt;strong&gt;coarse coding&lt;/strong&gt; or &lt;strong&gt;Kanerva coding&lt;/strong&gt; and &lt;strong&gt;RBF&lt;/strong&gt;. Those I’ve not used yet. Here I used the hand-crafted features that depends on the game itself very tightly. The representative ability of features depends on how many aspects you are going to take into account. This is really problem oriented features.  Pacman game looks like in following Fig.&lt;/p&gt;
+&lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/pacmanqlearner.png&quot; width=&quot;30%&quot; /&gt;
+  &lt;div class=&quot;figcaption&quot;&gt;Pacman snapshot&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The rules are quite simple in pacman game: you should control the pacman to collect pills as much as you can to get a higher score and avoide your pacman from hunting by the ghosts. There are at least one ghost which try to hunt you. There are also some power pills that enable you to eat the ghosts. What you need to do is running for points and avoiding from ghosts.&lt;/p&gt;
+
+&lt;h2&gt;Linear Function Approximation&lt;/h2&gt;
+&lt;p&gt;In function approximation schema we don’t use the state directly, instead we use the feature-based state representation information, so the states can be represented as feature vectors. Each element of this vector represents a special feature in game state, such as the distance to ghost,  number of ghost etc. Under this settings we can rewrite our state value or action value function as:
+\begin{equation}
+\begin{split}
+Q(s,a) &amp;amp;= w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a) &lt;br /&gt;
+&amp;amp;= \sum_{i=1}^{n} w_i f_i(s,a) &lt;br /&gt;
+v(s) &amp;amp;= \sum_{i=1}^{n} w_i f_i(s)&lt;br /&gt;
+\end{split} 
+\end{equation}
+In the normal Q-learning the action value in state &lt;script type=&quot;math/tex&quot;&gt;s&lt;/script&gt; with action &lt;script type=&quot;math/tex&quot;&gt;a&lt;/script&gt; updated as &lt;script type=&quot;math/tex&quot;&gt;Q(s,a) \leftarrow Q(s,a) + \alpha \times \delta&lt;/script&gt;,where &lt;script type=&quot;math/tex&quot;&gt;\delta&lt;/script&gt; the temporal different defined as &lt;script type=&quot;math/tex&quot;&gt;\delta = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right] - Q(s,a)&lt;/script&gt;. In the linear &lt;script type=&quot;math/tex&quot;&gt;Q&lt;/script&gt;-function the update step of &lt;script type=&quot;math/tex&quot;&gt;Q(s,a)&lt;/script&gt; is considered as updating the corresponding weight &lt;script type=&quot;math/tex&quot;&gt;w_i \leftarrow w_i + \alpha \times \delta \times f_i(s,a)&lt;/script&gt;. This problem is actually a &lt;strong&gt;linear Regression &lt;/strong&gt;problem: we have the target value 
+&lt;script type=&quot;math/tex&quot;&gt;Q(s,a) = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right]&lt;/script&gt;, 
+the estimated value 	&lt;script type=&quot;math/tex&quot;&gt;Q(s,a) = \sum_{k}w_k f_k(s,a)&lt;/script&gt;. The total error can be defined as
+\begin{equation}
+\Delta = \sum_{i}\left(q_i - \tilde{q_i}\right)^2 =  \sum_{i}\left(q_i - \sum_{k}w_k f_k(s,a)\right)^2.
+\end{equation}
+So the error will be minimized by gradient descent:
+\begin{equation}
+\nabla_{w_m} \Delta = \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2 =  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)
+= w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
+\end{equation}
+In pacman the features as we said can be the distance from agent to ghost, or the number of power pills, or the panic time of ghost etc.  Here we used there relative features: the distance to pill, the distance to ghost and a bias. After 1000 iterations training, it got the 98&lt;script type=&quot;math/tex&quot;&gt;\%&lt;/script&gt; times to win the game. 
+Linear function approximation works quit well in this case. What if we have much more complicated features that have high dimensions. It’s not a good choice to optimize this problem by yourself. There are many solvers can be used for optimizing problems.In next section the  convex optimization solver &lt;strong&gt;CVX&lt;/strong&gt; will be introduced.&lt;/p&gt;
+
+&lt;h2&gt;Approximate Linear Programming&lt;/h2&gt;
+&lt;p&gt;CVX is a modeling system for constructing and solving disciplined programs such as linear and quadratic programs, second-order cone programs. The usage of CVX is very user-friendly. What need to be at first initialized by you is to form your problem into a convex problem. Convex problem means the problem involved can be optimized (minimized) over a convex sets, further information see in section Optimization. CVX can be integrated either in Matlab or Python. In the following code pieces we used CVX to solving the linear equation &lt;script type=&quot;math/tex&quot;&gt;\mathbf{Ax=b}&lt;/script&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-matlab&quot; data-lang=&quot;matlab&quot;&gt;&lt;span class=&quot;c1&quot;&gt;% declare variable &lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;% using CVX&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cvx_begin&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;% define a affine variable in CVX&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;variable&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+		    
+  &lt;span class=&quot;c1&quot;&gt;% minimize the euclidean distance&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;minimize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;norm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cvx_end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;With keyword &lt;script type=&quot;math/tex&quot;&gt;cvx\_begin&lt;/script&gt; the cvx body begins, in its body all the necessary variables will be declared by using &lt;script type=&quot;math/tex&quot;&gt;variable&lt;/script&gt; keyword. After declaring we you intend to do then with &lt;script type=&quot;math/tex&quot;&gt;cvx\_end&lt;/script&gt; close the syntax definition. This procedure will be  automatically invoked by Matlab or Python.&lt;/p&gt;
+
+&lt;p&gt;Let’s go back to our VI and see how it’ll be solved by CVX. In VI we solve the Bellman equation in the following way:
+\begin{equation}
+V(s)=  \max_a \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right], \text{for } \forall s.
+\end{equation}
+This equality (or &lt;script type=&quot;math/tex&quot;&gt;\max&lt;/script&gt; operator ) is nonlinear, so we can relax this problem
+by introducing constrains. If we have a look at the Eq. above, it’s actually the equivalent to:
+\begin{equation}
+V(s) \ge \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right], \text{for } \forall s,a.
+\end{equation}
+Hence we can solve VI by solving 
+\begin{equation}
+\min d^T V s.t. \forall s, a: V(s)\ge \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right],
+\end{equation}
+where &lt;script type=&quot;math/tex&quot;&gt;d&lt;/script&gt; is a arbitrary vector. This is the relaxing process. Let &lt;script type=&quot;math/tex&quot;&gt;T&lt;/script&gt; stands for the Bellman operator, this VI equation can be simplified as
+\begin{equation}
+\min d^T V s.t. V \ge TV,
+\end{equation}
+For a  feasible solution of this constrained optimization, we have &lt;script type=&quot;math/tex&quot;&gt;V \ge TV&lt;/script&gt;. Bellman operator itself is monotonic operator, it means &lt;script type=&quot;math/tex&quot;&gt;V_1 \ge V_2 \implies TV_1 \ge TV_2&lt;/script&gt;. So it works also out for the optimal policy:
+\begin{equation}
+TV \ge T(TV) \ge T(T(TV))  = T^3 V \dots \implies V \ge TV \ge T^2 V \ge \dots \ge TV = V_\star.
+\end{equation}
+This equality means after iterations the feasible regions of relaxed VI  is  compacted  repeatedly and we’ll then get the optimal policy this way. So we can find &lt;script type=&quot;math/tex&quot;&gt;V_\star&lt;/script&gt; by solving the following linear program:
+\begin{equation}
+\min_V d^T V \ s.t. V \ge TV,
+\end{equation}
+We used CVX to solve this equation, the result is the same as we did in &lt;a href=&quot;/main/2017/06/07/model-based-method.html&quot;&gt;Model-based Methods&lt;/a&gt;. Below shows the outputs of CVX after successfully sovled our value iteration problem:&lt;/p&gt;
+&lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/cvxvi.png&quot; width=&quot;75%&quot; /&gt;
+  &lt;div class=&quot;figcaption&quot;&gt;The result of CVX for solving VI&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Let’s continuously go along this way straight to find the approximate linear programming. In linear function approximation settings the state value is represented by a linear combination of its features and the weight of features correspondingly. As it changes, so the VI function has been also changed accordingly:
+\begin{equation}
+\min_{V,r} {d}^T  {\phi} {r} \ s.t. {\phi r} \ge T ({\phi r}), \ V = {\phi r}
+\end{equation}
+After all substitutions we got this optimization problem:
+\begin{equation}
+	\begin{split}
+		\min_r \sum_{s\in S}d(s) \sum_{i}\phi_i(s) r_i &lt;br /&gt;
+		s.t. \forall s \in S, a: &lt;br /&gt;
+	\end{split}
+\end{equation}&lt;/p&gt;
+
+&lt;p&gt;\begin{equation}
+\sum_{i}\phi_i(s) r_i \ge \sum_{s^\prime} p(s^\prime|s, a)\left[ r(s, a,s^\prime) + \gamma \sum_{j} \phi_j(s^\prime) r_j \right]
+\end{equation}&lt;/p&gt;
+
+&lt;p&gt;That’s the basic idea of finding a optimal policy in a finite state problem by using approximate linear programming. It works sometime astonishing good and sometiem quite in opposite. The feature extract plays a critical role.&lt;/p&gt;</content><author><name>Jian Xi</name></author><summary type="html">Function Approximation As in Sample-based Methods showed, the Q-learning can be used to learn a policy in a grid (or finite) world. It can also be ued in computer games or even some complicated task i.g. robotic navigation etc. What we met as so far is just the limit state space problem. For iterative updating it still needs much resource for calculating and for storing the state-action information. What if we have a continuous problem, then your table for DP updating will be exploded expanded. In pacman we used some features to learn the weight of each state action pair. These features are game based properties. Says how many pills you have or how far away you stand from ghost etc. If the feature has a very tiny change, but it will still be considered as different state as used before. Can we abstract this slightly changed information and handle them as maybe same states? With function approximation we’ll find a solution.</summary></entry><entry><title type="html">Sample-based Method</title><link href="http://localhost:4000/main/2017/06/07/sample-based-method.html" rel="alternate" type="text/html" title="Sample-based Method" /><published>2017-06-07T17:21:22+02:00</published><updated>2017-06-07T17:21:22+02:00</updated><id>http://localhost:4000/main/2017/06/07/sample-based-method</id><content type="html" xml:base="http://localhost:4000/main/2017/06/07/sample-based-method.html">&lt;h1&gt;Aside&lt;/h1&gt;
 &lt;p&gt;In contrast to &lt;a href=&quot;/main/2017/06/07/model-based-method.html&quot;&gt;Model-based Methods&lt;/a&gt; such as PI and VI , in this part the &lt;strong&gt;Model Free Methods &lt;/strong&gt;will be considered. For some case we don’t know the dynamics of our environment. It’s better we just interact with the environment to find the control policy.&lt;/p&gt;
 
 &lt;h1&gt;Monte Carlo Method&lt;/h1&gt;
@@ -18,8 +124,8 @@
 &lt;p&gt;Q-Learning is another kind of TD-Learning. It approximates the optimal &lt;script type=&quot;math/tex&quot;&gt;q_\star&lt;/script&gt; directly by learning the action value function independent the policy being followed. So it’s an off-policy TD control approach. As we said, the most amazing part or TD is it benefits one side from MC-method, it also bootstrap itself by considering the past experiences. Therefore there are two sides should be considered accordingly, the exploration and the exploitation. Exploration focus much more on to explore the unknown states, whereas exploitation thinks much heavily about using the current estimates greedily. For exploration we have i.g. &lt;script type=&quot;math/tex&quot;&gt;\epsilon-&lt;/script&gt; greedy policy. With given exploration probability &lt;script type=&quot;math/tex&quot;&gt;\epsilon&lt;/script&gt; we select some action in current state randomly and with &lt;script type=&quot;math/tex&quot;&gt;1-\epsilon&lt;/script&gt; we just follow the current policy. In an non-deterministic MDPs play the noise a critical role. Noise means how uncertain than the agent gets a successor state after taking an action in current state. When the noise is quite big in your environment, it’d be quite if you use a better exploration policy.&lt;/p&gt;
 
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
-  &lt;img src=&quot;/assets/qlearner.png&quot; width=&quot;50%&quot; /&gt;
-  &lt;img src=&quot;/assets/qlearner_eps.png&quot; width=&quot;50%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/qlearner.png&quot; width=&quot;50%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/qlearner_eps.png&quot; width=&quot;50%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;&lt;b&gt;Top:&lt;/b&gt;Q-learning without exploration &lt;b&gt;Bottom:&lt;/b&gt; Q-learning with epsilon-greedy policy&lt;/div&gt;
 &lt;/div&gt;
 
@@ -28,7 +134,7 @@ As it shows, the action value of states are totally different after 100 iteratio
 
 &lt;p&gt;With exploration the Q-learning enables us to using the interaction with environment to stretch the optimal policy. But there are still polish points can be found in Q-learning. The Q-learner always back propagates the value state information or shortest path information from current state to the state where it comes from, as depicted as Fig.:&lt;/p&gt;
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
-  &lt;img src=&quot;/assets/qpropagation.png&quot; width=&quot;50%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/qpropagation.png&quot; width=&quot;50%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;Q-leaner propagates the &quot;shortest path information&quot; back each time at one time step &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;Actually we know from which states we get the current state implictly, so we can use this information to make Q-learning much effective? In next section we will find an answer for it.&lt;/p&gt;</content><author><name>Jian Xi</name></author><summary type="html">Aside In contrast to Model-based Methods such as PI and VI , in this part the Model Free Methods will be considered. For some case we don’t know the dynamics of our environment. It’s better we just interact with the environment to find the control policy.</summary></entry><entry><title type="html">Eligibility Traces</title><link href="http://localhost:4000/main/2017/06/07/eligibility-traces.html" rel="alternate" type="text/html" title="Eligibility Traces" /><published>2017-06-07T16:14:48+02:00</published><updated>2017-06-07T16:14:48+02:00</updated><id>http://localhost:4000/main/2017/06/07/eligibility-traces</id><content type="html" xml:base="http://localhost:4000/main/2017/06/07/eligibility-traces.html">&lt;h1&gt;Aside&lt;/h1&gt;
@@ -119,7 +225,7 @@ which is called &lt;strong&gt;action  value  function&lt;/strong&gt; for policy 
 &lt;p&gt;Either PI and VI has the character in common that they assume the dynamic of the current environment is available. It means i.e. in the grid world the transition probability from each state to its successor state is given. In real word sometimes it’s either expensive to get this dynamics or it’s impossible to get those things. In the following section the samples-based algorithm will be represented.&lt;/p&gt;</content><author><name>Jian Xi</name></author><summary type="html">As mentioned in Shortest Path previously, we want to find a optimal policy, so our agent can get much more rewards and few penalty. This policy is acquired by the interaction of the agent with environment. As the agent works, we should use the feedbacks to extract the policy informations as we can. For it we need a mechanism to describes how a state good or bad for the agent is. In other words, what penalty informations exist at states in environment. This policy is given described by the value function accordingly. Let’s clarify the definition of policy. A policy is mapping from each state , and action , to the probability of taking action in state . So the value function of a state under a policy denoted as is a expected return when agent starts from and follows the policy over times. In MDPs the value state function for policy is defined as</summary></entry><entry><title type="html">Shortest Path Problem</title><link href="http://localhost:4000/main/2017/06/07/shortest-path-problem.html" rel="alternate" type="text/html" title="Shortest Path Problem" /><published>2017-06-07T15:01:22+02:00</published><updated>2017-06-07T15:01:22+02:00</updated><id>http://localhost:4000/main/2017/06/07/shortest-path-problem</id><content type="html" xml:base="http://localhost:4000/main/2017/06/07/shortest-path-problem.html">&lt;p&gt;&lt;strong&gt;Reinforcement Learning&lt;/strong&gt; is another machine learning algorithm in contrast to models like supervised learning and unsupervised learning. In this problem settings we have an &lt;strong&gt;agent&lt;/strong&gt; and want to achieve some goal. Usually we can not tell the agent how to achieve our goal directly in the environment, in which it i.e. moves, gets some feedbacks after taking an action, for sometimes we do not known the dynamics of this environment or even the environment in this environment is non-deterministic, say, assuming we have an agent to move toward to a target, with 0.8 probability the robot will move correctly as we expecte and with 0.2 the robot will turn a little from left etc.  These feedbacks are called &lt;strong&gt;Reward&lt;/strong&gt;. All the training data we use in reinforcement learning is generated by interaction of agent with this environment. Normally the environment can be abstracted as it consists of many &lt;strong&gt;states&lt;/strong&gt;, the state, at which the agent terminates, is called &lt;strong&gt;absorb&lt;/strong&gt; or &lt;strong&gt;terminal&lt;/strong&gt; state. At each time step the agent takes an action and gets a reward. When the agent reaches this absorb state, this &lt;strong&gt;episodic&lt;/strong&gt; task is closed. So our problem turns to finding the optimal action sets that maximize the total rewards along time runs. The strategy to used to find those actions is called &lt;strong&gt;policy&lt;/strong&gt;, with it the agent can reach the terminal state and get many rewards as it’s able to receive. This agent–environment interaction in reinforcement learning is depicted in Fig:&lt;/p&gt;
 
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
-  &lt;img src=&quot;http://localhost:4000/assets/mdp.png&quot; width=&quot;20%&quot; /&gt;
+  &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/mdp.png&quot; width=&quot;20%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;The agent–environment interaction in reinforcement learning&lt;/div&gt;
 &lt;/div&gt;
 
