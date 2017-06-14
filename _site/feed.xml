@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-14T10:25:28+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-14T10:36:17+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
 </subtitle><author><name>Jian Xi</name></author><entry><title type="html">Function Approximation</title><link href="http://localhost:4000/main/2017/06/08/function-approximation.html" rel="alternate" type="text/html" title="Function Approximation" /><published>2017-06-08T21:15:24+02:00</published><updated>2017-06-08T21:15:24+02:00</updated><id>http://localhost:4000/main/2017/06/08/function-approximation</id><content type="html" xml:base="http://localhost:4000/main/2017/06/08/function-approximation.html">&lt;h1&gt;Function Approximation&lt;/h1&gt;
 &lt;p&gt;As in &lt;a href=&quot;/main/2017/06/07/sample-based-method.html&quot;&gt;Sample-based Methods&lt;/a&gt; showed, the Q-learning can be used to learn a policy in a grid (or finite) world. It can also be ued in computer games or even some complicated task i.g. robotic navigation etc. What we met as so far is just the limit state space problem. For iterative updating it still needs much resource for calculating and for storing the state-action information. What if we have a continuous problem, then your table for DP updating will be exploded expanded. In pacman we used some features to learn the weight of each state action pair. These features are game based properties. Says how many pills you have or how far away you stand from ghost etc. If the feature has a very tiny change, but it will still be considered as different state as used before. Can we abstract this slightly changed information and handle them as maybe same states? With function approximation we’ll find a solution.&lt;/p&gt;
 
@@ -54,10 +54,11 @@ v(s) = \sum_{i=1}^{n} w_i f_i(s)
 
 &lt;p&gt;So the error will be minimized by gradient descent:&lt;/p&gt;
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
-\nabla_{w_m} \Delta = \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2 =  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)
-= w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
-\end{equation}&lt;/script&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{align}
+\nabla_{w_m} \Delta &amp;= \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2\\ &amp;=  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)\\
+&amp;= w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
+\end{align} %]]&gt;&lt;/script&gt;
 
 &lt;p&gt;In pacman the features as we said can be the distance from agent to ghost, or the number of power pills, or the panic time of ghost etc.  Here we used there relative features: the distance to pill, the distance to ghost and a bias. After 1000 iterations training, it got the 98&lt;script type=&quot;math/tex&quot;&gt;\%&lt;/script&gt; times to win the game. 
 Linear function approximation works quit well in this case. What if we have much more complicated features that have high dimensions. It’s not a good choice to optimize this problem by yourself. There are many solvers can be used for optimizing problems.In next section the  convex optimization solver &lt;strong&gt;CVX&lt;/strong&gt; will be introduced.&lt;/p&gt;

@@ -58,10 +58,10 @@ $$\begin{equation}
 
 So the error will be minimized by gradient descent:
 
-$$\begin{equation}
-\nabla_{w_m} \Delta = \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2 =  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)
-= w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
-\end{equation}$$
+$$\begin{align}
+\nabla_{w_m} \Delta &= \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2\\ &=  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)\\
+&= w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
+\end{align}$$
 
 
 In pacman the features as we said can be the distance from agent to ghost, or the number of power pills, or the panic time of ghost etc.  Here we used there relative features: the distance to pill, the distance to ghost and a bias. After 1000 iterations training, it got the 98$$\%$$ times to win the game. 

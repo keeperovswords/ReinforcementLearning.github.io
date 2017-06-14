@@ -9,7 +9,24 @@
   <link rel="stylesheet" href="/css/normalize.css">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/css/cayman.css">
+  <!--
+   Maybe solving equation display problem
+  -->
+  <script type="text/x-mathjax-config"> MathJax.Hub.Config({ TeX: { equationNumbers: { autoNumber: "all" } } }); </script>
+       <script type="text/x-mathjax-config">
+         MathJax.Hub.Config({
+           tex2jax: {
+             inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+             displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+             processEscapes: true
+           },
+           "HTML-CSS": { availableFonts: ["TeX"] }
+         });
+       </script>
+ <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+       
 </head>
+
 
   <body>
     <section class="page-header">
@@ -82,10 +99,11 @@ v(s) = \sum_{i=1}^{n} w_i f_i(s)
 
 <p>So the error will be minimized by gradient descent:</p>
 
-<script type="math/tex; mode=display">\begin{equation}
-\nabla_{w_m} \Delta = \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2 =  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)
-= w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
-\end{equation}</script>
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align}
+\nabla_{w_m} \Delta &= \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2\\ &=  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)\\
+&= w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
+\end{align} %]]></script>
 
 <p>In pacman the features as we said can be the distance from agent to ghost, or the number of power pills, or the panic time of ghost etc.  Here we used there relative features: the distance to pill, the distance to ghost and a bias. After 1000 iterations training, it got the 98<script type="math/tex">\%</script> times to win the game. 
 Linear function approximation works quit well in this case. What if we have much more complicated features that have high dimensions. It’s not a good choice to optimize this problem by yourself. There are many solvers can be used for optimizing problems.In next section the  convex optimization solver <strong>CVX</strong> will be introduced.</p>
