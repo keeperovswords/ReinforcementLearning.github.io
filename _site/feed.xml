@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-14T09:51:42+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.4.3">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-06-14T10:12:46+02:00</updated><id>http://localhost:4000/</id><title type="html">Reinforcement Learning</title><subtitle>The introduction of all basic algorithms in reinforcement learning. Keyword: Robotics, Optimal Control, Function Approximation
 </subtitle><author><name>Jian Xi</name></author><entry><title type="html">Function Approximation</title><link href="http://localhost:4000/main/2017/06/08/function-approximation.html" rel="alternate" type="text/html" title="Function Approximation" /><published>2017-06-08T21:15:24+02:00</published><updated>2017-06-08T21:15:24+02:00</updated><id>http://localhost:4000/main/2017/06/08/function-approximation</id><content type="html" xml:base="http://localhost:4000/main/2017/06/08/function-approximation.html">&lt;h1&gt;Function Approximation&lt;/h1&gt;
 &lt;p&gt;As in &lt;a href=&quot;/main/2017/06/07/sample-based-method.html&quot;&gt;Sample-based Methods&lt;/a&gt; showed, the Q-learning can be used to learn a policy in a grid (or finite) world. It can also be ued in computer games or even some complicated task i.g. robotic navigation etc. What we met as so far is just the limit state space problem. For iterative updating it still needs much resource for calculating and for storing the state-action information. What if we have a continuous problem, then your table for DP updating will be exploded expanded. In pacman we used some features to learn the weight of each state action pair. These features are game based properties. Says how many pills you have or how far away you stand from ghost etc. If the feature has a very tiny change, but it will still be considered as different state as used before. Can we abstract this slightly changed information and handle them as maybe same states? With function approximation we’ll find a solution.&lt;/p&gt;
 
@@ -18,26 +18,48 @@
 &lt;p&gt;The rules are quite simple in pacman game: you should control the pacman to collect pills as much as you can to get a higher score and avoide your pacman from hunting by the ghosts. There are at least one ghost which try to hunt you. There are also some power pills that enable you to eat the ghosts. What you need to do is running for points and avoiding from ghosts.&lt;/p&gt;
 
 &lt;h2&gt;Linear Function Approximation&lt;/h2&gt;
-&lt;p&gt;In function approximation schema we don’t use the state directly, instead we use the feature-based state representation information, so the states can be represented as feature vectors. Each element of this vector represents a special feature in game state, such as the distance to ghost,  number of ghost etc. Under this settings we can rewrite our state value or action value function as:
-\begin{equation}
-\begin{split}
-Q(s,a) &amp;amp;= w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a) &lt;br /&gt;
-&amp;amp;= \sum_{i=1}^{n} w_i f_i(s,a) &lt;br /&gt;
-v(s) &amp;amp;= \sum_{i=1}^{n} w_i f_i(s)&lt;br /&gt;
-\end{split} 
-\end{equation}
-In the normal Q-learning the action value in state &lt;script type=&quot;math/tex&quot;&gt;s&lt;/script&gt; with action &lt;script type=&quot;math/tex&quot;&gt;a&lt;/script&gt; updated as &lt;script type=&quot;math/tex&quot;&gt;Q(s,a) \leftarrow Q(s,a) + \alpha \times \delta&lt;/script&gt;,where &lt;script type=&quot;math/tex&quot;&gt;\delta&lt;/script&gt; the temporal different defined as &lt;script type=&quot;math/tex&quot;&gt;\delta = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right] - Q(s,a)&lt;/script&gt;. In the linear &lt;script type=&quot;math/tex&quot;&gt;Q&lt;/script&gt;-function the update step of &lt;script type=&quot;math/tex&quot;&gt;Q(s,a)&lt;/script&gt; is considered as updating the corresponding weight &lt;script type=&quot;math/tex&quot;&gt;w_i \leftarrow w_i + \alpha \times \delta \times f_i(s,a)&lt;/script&gt;. This problem is actually a &lt;strong&gt;linear Regression &lt;/strong&gt;problem: we have the target value 
-&lt;script type=&quot;math/tex&quot;&gt;Q(s,a) = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right]&lt;/script&gt;, 
-the estimated value 	&lt;script type=&quot;math/tex&quot;&gt;Q(s,a) = \sum_{k}w_k f_k(s,a)&lt;/script&gt;. The total error can be defined as
-\begin{equation}
+&lt;p&gt;In function approximation schema we don’t use the state directly, instead we use the feature-based state representation information, so the states can be represented as feature vectors. Each element of this vector represents a special feature in game state, such as the distance to ghost,  number of ghost etc. Under this settings we can rewrite our action value function as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+Q(s,a) = w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a) = \sum_{i=1}^{n} w_i f_i(s,a)
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;and the state value  as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+v(s) = \sum_{i=1}^{n} w_i f_i(s)
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;In the normal Q-learning the action value in state &lt;script type=&quot;math/tex&quot;&gt;s&lt;/script&gt; with action &lt;script type=&quot;math/tex&quot;&gt;a&lt;/script&gt; updated as &lt;script type=&quot;math/tex&quot;&gt;Q(s,a) \leftarrow Q(s,a) + \alpha \times \delta&lt;/script&gt;,where &lt;script type=&quot;math/tex&quot;&gt;\delta&lt;/script&gt; the temporal different defined as&lt;/p&gt;
+
+&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;\begin{equation}\delta = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right] - Q(s,a)\end{equation}&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;In the linear &lt;script type=&quot;math/tex&quot;&gt;Q&lt;/script&gt;-function the update step of &lt;script type=&quot;math/tex&quot;&gt;Q(s,a)&lt;/script&gt; is considered as updating the corresponding weight&lt;/p&gt;
+
+&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;\begin{equation}w_i \leftarrow w_i + \alpha \times \delta \times f_i(s,a)\end{equation}&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;This problem is actually a &lt;strong&gt;Linear Regression &lt;/strong&gt;problem: we have the target value defined as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}Q(s,a) = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right]\end{equation}&lt;/script&gt;
+
+&lt;p&gt;and the estimated value&lt;/p&gt;
+
+&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;\begin{equation}\tilde{Q}(s,a) = \sum_{k}w_k f_k(s,a)\end{equation}&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;The total error can be defined as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 \Delta = \sum_{i}\left(q_i - \tilde{q_i}\right)^2 =  \sum_{i}\left(q_i - \sum_{k}w_k f_k(s,a)\right)^2.
-\end{equation}
-So the error will be minimized by gradient descent:
-\begin{equation}
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;So the error will be minimized by gradient descent:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 \nabla_{w_m} \Delta = \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2 =  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)
 = w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
-\end{equation}
-In pacman the features as we said can be the distance from agent to ghost, or the number of power pills, or the panic time of ghost etc.  Here we used there relative features: the distance to pill, the distance to ghost and a bias. After 1000 iterations training, it got the 98&lt;script type=&quot;math/tex&quot;&gt;\%&lt;/script&gt; times to win the game. 
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;In pacman the features as we said can be the distance from agent to ghost, or the number of power pills, or the panic time of ghost etc.  Here we used there relative features: the distance to pill, the distance to ghost and a bias. After 1000 iterations training, it got the 98&lt;script type=&quot;math/tex&quot;&gt;\%&lt;/script&gt; times to win the game. 
 Linear function approximation works quit well in this case. What if we have much more complicated features that have high dimensions. It’s not a good choice to optimize this problem by yourself. There are many solvers can be used for optimizing problems.In next section the  convex optimization solver &lt;strong&gt;CVX&lt;/strong&gt; will be introduced.&lt;/p&gt;
 
 &lt;h2&gt;Approximate Linear Programming&lt;/h2&gt;
@@ -58,52 +80,65 @@ Linear function approximation works quit well in this case. What if we have much
 
 &lt;p&gt;With keyword &lt;script type=&quot;math/tex&quot;&gt;cvx\_begin&lt;/script&gt; the cvx body begins, in its body all the necessary variables will be declared by using &lt;script type=&quot;math/tex&quot;&gt;variable&lt;/script&gt; keyword. After declaring we you intend to do then with &lt;script type=&quot;math/tex&quot;&gt;cvx\_end&lt;/script&gt; close the syntax definition. This procedure will be  automatically invoked by Matlab or Python.&lt;/p&gt;
 
-&lt;p&gt;Let’s go back to our VI and see how it’ll be solved by CVX. In VI we solve the Bellman equation in the following way:
-\begin{equation}
+&lt;p&gt;Let’s go back to our VI and see how it’ll be solved by CVX. In VI we solve the Bellman equation in the following way:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 V(s)=  \max_a \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right], \text{for } \forall s.
-\end{equation}
-This equality (or &lt;script type=&quot;math/tex&quot;&gt;\max&lt;/script&gt; operator ) is nonlinear, so we can relax this problem
-by introducing constrains. If we have a look at the Eq. above, it’s actually the equivalent to:
-\begin{equation}
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;This equality (or &lt;script type=&quot;math/tex&quot;&gt;\max&lt;/script&gt; operator ) is nonlinear, so we can relax this problem
+by introducing constrains. If we have a look at the Eq. above, it’s actually the equivalent to:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 V(s) \ge \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right], \text{for } \forall s,a.
-\end{equation}
-Hence we can solve VI by solving 
-\begin{equation}
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;Hence we can solve VI by solving&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 \min d^T V s.t. \forall s, a: V(s)\ge \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right],
-\end{equation}
-where &lt;script type=&quot;math/tex&quot;&gt;d&lt;/script&gt; is a arbitrary vector. This is the relaxing process. Let &lt;script type=&quot;math/tex&quot;&gt;T&lt;/script&gt; stands for the Bellman operator, this VI equation can be simplified as
-\begin{equation}
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;where &lt;script type=&quot;math/tex&quot;&gt;d&lt;/script&gt; is a arbitrary vector. This is the relaxing process. Let &lt;script type=&quot;math/tex&quot;&gt;T&lt;/script&gt; stands for the Bellman operator, this VI equation can be simplified as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 \min d^T V s.t. V \ge TV,
-\end{equation}
-For a  feasible solution of this constrained optimization, we have &lt;script type=&quot;math/tex&quot;&gt;V \ge TV&lt;/script&gt;. Bellman operator itself is monotonic operator, it means &lt;script type=&quot;math/tex&quot;&gt;V_1 \ge V_2 \implies TV_1 \ge TV_2&lt;/script&gt;. So it works also out for the optimal policy:
-\begin{equation}
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;For a  feasible solution of this constrained optimization, we have &lt;script type=&quot;math/tex&quot;&gt;V \ge TV&lt;/script&gt;. Bellman operator itself is monotonic operator, it means &lt;script type=&quot;math/tex&quot;&gt;V_1 \ge V_2 \implies TV_1 \ge TV_2&lt;/script&gt;. So it works also out for the optimal policy:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 TV \ge T(TV) \ge T(T(TV))  = T^3 V \dots \implies V \ge TV \ge T^2 V \ge \dots \ge TV = V_\star.
-\end{equation}
-This equality means after iterations the feasible regions of relaxed VI  is  compacted  repeatedly and we’ll then get the optimal policy this way. So we can find &lt;script type=&quot;math/tex&quot;&gt;V_\star&lt;/script&gt; by solving the following linear program:
-\begin{equation}
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;This equality means after iterations the feasible regions of relaxed VI  is  compacted  repeatedly and we’ll then get the optimal policy this way. So we can find &lt;script type=&quot;math/tex&quot;&gt;V_\star&lt;/script&gt; by solving the following linear program:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 \min_V d^T V \ s.t. V \ge TV,
-\end{equation}
-We used CVX to solve this equation, the result is the same as we did in &lt;a href=&quot;/main/2017/06/07/model-based-method.html&quot;&gt;Model-based Methods&lt;/a&gt;. Below shows the outputs of CVX after successfully sovled our value iteration problem:&lt;/p&gt;
+\end{equation}&lt;/script&gt;
+
+&lt;p&gt;We used CVX to solve this equation, the result is the same as we did in &lt;a href=&quot;/main/2017/06/07/model-based-method.html&quot;&gt;Model-based Methods&lt;/a&gt;. Below shows the outputs of CVX after successfully sovled our value iteration problem:&lt;/p&gt;
 &lt;div class=&quot;fig figcenter fighighlight&quot;&gt;
   &lt;img src=&quot;http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/cvxvi.png&quot; width=&quot;75%&quot; /&gt;
   &lt;div class=&quot;figcaption&quot;&gt;The result of CVX for solving VI&lt;/div&gt;
 &lt;/div&gt;
 
 &lt;p&gt;Let’s continuously go along this way straight to find the approximate linear programming. In linear function approximation settings the state value is represented by a linear combination of its features and the weight of features correspondingly. As it changes, so the VI function has been also changed accordingly:
-\begin{equation}
+&lt;script type=&quot;math/tex&quot;&gt;\begin{equation}
 \min_{V,r} {d}^T  {\phi} {r} \ s.t. {\phi r} \ge T ({\phi r}), \ V = {\phi r}
-\end{equation}
-After all substitutions we got this optimization problem:
-\begin{equation}
-	\begin{split}
-		\min_r \sum_{s\in S}d(s) \sum_{i}\phi_i(s) r_i &lt;br /&gt;
-		s.t. \forall s \in S, a: &lt;br /&gt;
-	\end{split}
-\end{equation}&lt;/p&gt;
+\end{equation}&lt;/script&gt;
+After all substitutions we got this optimization problem:&lt;/p&gt;
 
-&lt;p&gt;\begin{equation}
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
+	\begin{split}
+		\min_r \sum_{s\in S}d(s) \sum_{i}\phi_i(s) r_i \\
+		s.t. \forall s \in S, a: \\
+	\end{split}
+\end{equation}&lt;/script&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{equation}
 \sum_{i}\phi_i(s) r_i \ge \sum_{s^\prime} p(s^\prime|s, a)\left[ r(s, a,s^\prime) + \gamma \sum_{j} \phi_j(s^\prime) r_j \right]
-\end{equation}&lt;/p&gt;
+\end{equation}&lt;/script&gt;
 
 &lt;p&gt;That’s the basic idea of finding a optimal policy in a finite state problem by using approximate linear programming. It works sometime astonishing good and sometiem quite in opposite. The feature extract plays a critical role.&lt;/p&gt;</content><author><name>Jian Xi</name></author><summary type="html">Function Approximation As in Sample-based Methods showed, the Q-learning can be used to learn a policy in a grid (or finite) world. It can also be ued in computer games or even some complicated task i.g. robotic navigation etc. What we met as so far is just the limit state space problem. For iterative updating it still needs much resource for calculating and for storing the state-action information. What if we have a continuous problem, then your table for DP updating will be exploded expanded. In pacman we used some features to learn the weight of each state action pair. These features are game based properties. Says how many pills you have or how far away you stand from ghost etc. If the feature has a very tiny change, but it will still be considered as different state as used before. Can we abstract this slightly changed information and handle them as maybe same states? With function approximation we’ll find a solution.</summary></entry><entry><title type="html">Sample-based Method</title><link href="http://localhost:4000/main/2017/06/07/sample-based-method.html" rel="alternate" type="text/html" title="Sample-based Method" /><published>2017-06-07T17:21:22+02:00</published><updated>2017-06-07T17:21:22+02:00</updated><id>http://localhost:4000/main/2017/06/07/sample-based-method</id><content type="html" xml:base="http://localhost:4000/main/2017/06/07/sample-based-method.html">&lt;h1&gt;Aside&lt;/h1&gt;
 &lt;p&gt;In contrast to &lt;a href=&quot;/main/2017/06/07/model-based-method.html&quot;&gt;Model-based Methods&lt;/a&gt; such as PI and VI , in this part the &lt;strong&gt;Model Free Methods &lt;/strong&gt;will be considered. For some case we don’t know the dynamics of our environment. It’s better we just interact with the environment to find the control policy.&lt;/p&gt;

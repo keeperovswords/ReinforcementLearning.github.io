@@ -46,26 +46,48 @@
 <p>The rules are quite simple in pacman game: you should control the pacman to collect pills as much as you can to get a higher score and avoide your pacman from hunting by the ghosts. There are at least one ghost which try to hunt you. There are also some power pills that enable you to eat the ghosts. What you need to do is running for points and avoiding from ghosts.</p>
 
 <h2>Linear Function Approximation</h2>
-<p>In function approximation schema we don’t use the state directly, instead we use the feature-based state representation information, so the states can be represented as feature vectors. Each element of this vector represents a special feature in game state, such as the distance to ghost,  number of ghost etc. Under this settings we can rewrite our state value or action value function as:
-\begin{equation}
-\begin{split}
-Q(s,a) &amp;= w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a) <br />
-&amp;= \sum_{i=1}^{n} w_i f_i(s,a) <br />
-v(s) &amp;= \sum_{i=1}^{n} w_i f_i(s)<br />
-\end{split} 
-\end{equation}
-In the normal Q-learning the action value in state <script type="math/tex">s</script> with action <script type="math/tex">a</script> updated as <script type="math/tex">Q(s,a) \leftarrow Q(s,a) + \alpha \times \delta</script>,where <script type="math/tex">\delta</script> the temporal different defined as <script type="math/tex">\delta = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right] - Q(s,a)</script>. In the linear <script type="math/tex">Q</script>-function the update step of <script type="math/tex">Q(s,a)</script> is considered as updating the corresponding weight <script type="math/tex">w_i \leftarrow w_i + \alpha \times \delta \times f_i(s,a)</script>. This problem is actually a <strong>linear Regression </strong>problem: we have the target value 
-<script type="math/tex">Q(s,a) = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right]</script>, 
-the estimated value 	<script type="math/tex">Q(s,a) = \sum_{k}w_k f_k(s,a)</script>. The total error can be defined as
-\begin{equation}
+<p>In function approximation schema we don’t use the state directly, instead we use the feature-based state representation information, so the states can be represented as feature vectors. Each element of this vector represents a special feature in game state, such as the distance to ghost,  number of ghost etc. Under this settings we can rewrite our action value function as:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
+Q(s,a) = w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a) = \sum_{i=1}^{n} w_i f_i(s,a)
+\end{equation}</script>
+
+<p>and the state value  as:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
+v(s) = \sum_{i=1}^{n} w_i f_i(s)
+\end{equation}</script>
+
+<p>In the normal Q-learning the action value in state <script type="math/tex">s</script> with action <script type="math/tex">a</script> updated as <script type="math/tex">Q(s,a) \leftarrow Q(s,a) + \alpha \times \delta</script>,where <script type="math/tex">\delta</script> the temporal different defined as</p>
+
+<p><script type="math/tex">\begin{equation}\delta = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right] - Q(s,a)\end{equation}</script>.</p>
+
+<p>In the linear <script type="math/tex">Q</script>-function the update step of <script type="math/tex">Q(s,a)</script> is considered as updating the corresponding weight</p>
+
+<p><script type="math/tex">\begin{equation}w_i \leftarrow w_i + \alpha \times \delta \times f_i(s,a)\end{equation}</script>.</p>
+
+<p>This problem is actually a <strong>Linear Regression </strong>problem: we have the target value defined as</p>
+
+<script type="math/tex; mode=display">\begin{equation}Q(s,a) = \left[r + \gamma \max_a^\prime Q(s^\prime, a^\prime) \right]\end{equation}</script>
+
+<p>and the estimated value</p>
+
+<p><script type="math/tex">\begin{equation}\tilde{Q}(s,a) = \sum_{k}w_k f_k(s,a)\end{equation}</script>.</p>
+
+<p>The total error can be defined as</p>
+
+<script type="math/tex; mode=display">\begin{equation}
 \Delta = \sum_{i}\left(q_i - \tilde{q_i}\right)^2 =  \sum_{i}\left(q_i - \sum_{k}w_k f_k(s,a)\right)^2.
-\end{equation}
-So the error will be minimized by gradient descent:
-\begin{equation}
+\end{equation}</script>
+
+<p>So the error will be minimized by gradient descent:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
 \nabla_{w_m} \Delta = \nabla_{w_m} \frac{1}{2}\left(q - \sum_{k}w_k f_k(s,a) \right)^2 =  -\left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a)
 = w_m + \alpha   \left(q_i - \sum_{k} w_k f_k(s,a)\right) f_m(s,a).
-\end{equation}
-In pacman the features as we said can be the distance from agent to ghost, or the number of power pills, or the panic time of ghost etc.  Here we used there relative features: the distance to pill, the distance to ghost and a bias. After 1000 iterations training, it got the 98<script type="math/tex">\%</script> times to win the game. 
+\end{equation}</script>
+
+<p>In pacman the features as we said can be the distance from agent to ghost, or the number of power pills, or the panic time of ghost etc.  Here we used there relative features: the distance to pill, the distance to ghost and a bias. After 1000 iterations training, it got the 98<script type="math/tex">\%</script> times to win the game. 
 Linear function approximation works quit well in this case. What if we have much more complicated features that have high dimensions. It’s not a good choice to optimize this problem by yourself. There are many solvers can be used for optimizing problems.In next section the  convex optimization solver <strong>CVX</strong> will be introduced.</p>
 
 <h2>Approximate Linear Programming</h2>
@@ -86,52 +108,65 @@ Linear function approximation works quit well in this case. What if we have much
 
 <p>With keyword <script type="math/tex">cvx\_begin</script> the cvx body begins, in its body all the necessary variables will be declared by using <script type="math/tex">variable</script> keyword. After declaring we you intend to do then with <script type="math/tex">cvx\_end</script> close the syntax definition. This procedure will be  automatically invoked by Matlab or Python.</p>
 
-<p>Let’s go back to our VI and see how it’ll be solved by CVX. In VI we solve the Bellman equation in the following way:
-\begin{equation}
+<p>Let’s go back to our VI and see how it’ll be solved by CVX. In VI we solve the Bellman equation in the following way:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
 V(s)=  \max_a \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right], \text{for } \forall s.
-\end{equation}
-This equality (or <script type="math/tex">\max</script> operator ) is nonlinear, so we can relax this problem
-by introducing constrains. If we have a look at the Eq. above, it’s actually the equivalent to:
-\begin{equation}
+\end{equation}</script>
+
+<p>This equality (or <script type="math/tex">\max</script> operator ) is nonlinear, so we can relax this problem
+by introducing constrains. If we have a look at the Eq. above, it’s actually the equivalent to:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
 V(s) \ge \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right], \text{for } \forall s,a.
-\end{equation}
-Hence we can solve VI by solving 
-\begin{equation}
+\end{equation}</script>
+
+<p>Hence we can solve VI by solving</p>
+
+<script type="math/tex; mode=display">\begin{equation}
 \min d^T V s.t. \forall s, a: V(s)\ge \sum_{s^\prime}p(s^\prime|s,a) \left[ r(s, a, s^\prime) + \gamma V(s^\prime) \right],
-\end{equation}
-where <script type="math/tex">d</script> is a arbitrary vector. This is the relaxing process. Let <script type="math/tex">T</script> stands for the Bellman operator, this VI equation can be simplified as
-\begin{equation}
+\end{equation}</script>
+
+<p>where <script type="math/tex">d</script> is a arbitrary vector. This is the relaxing process. Let <script type="math/tex">T</script> stands for the Bellman operator, this VI equation can be simplified as</p>
+
+<script type="math/tex; mode=display">\begin{equation}
 \min d^T V s.t. V \ge TV,
-\end{equation}
-For a  feasible solution of this constrained optimization, we have <script type="math/tex">V \ge TV</script>. Bellman operator itself is monotonic operator, it means <script type="math/tex">V_1 \ge V_2 \implies TV_1 \ge TV_2</script>. So it works also out for the optimal policy:
-\begin{equation}
+\end{equation}</script>
+
+<p>For a  feasible solution of this constrained optimization, we have <script type="math/tex">V \ge TV</script>. Bellman operator itself is monotonic operator, it means <script type="math/tex">V_1 \ge V_2 \implies TV_1 \ge TV_2</script>. So it works also out for the optimal policy:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
 TV \ge T(TV) \ge T(T(TV))  = T^3 V \dots \implies V \ge TV \ge T^2 V \ge \dots \ge TV = V_\star.
-\end{equation}
-This equality means after iterations the feasible regions of relaxed VI  is  compacted  repeatedly and we’ll then get the optimal policy this way. So we can find <script type="math/tex">V_\star</script> by solving the following linear program:
-\begin{equation}
+\end{equation}</script>
+
+<p>This equality means after iterations the feasible regions of relaxed VI  is  compacted  repeatedly and we’ll then get the optimal policy this way. So we can find <script type="math/tex">V_\star</script> by solving the following linear program:</p>
+
+<script type="math/tex; mode=display">\begin{equation}
 \min_V d^T V \ s.t. V \ge TV,
-\end{equation}
-We used CVX to solve this equation, the result is the same as we did in <a href="/main/2017/06/07/model-based-method.html">Model-based Methods</a>. Below shows the outputs of CVX after successfully sovled our value iteration problem:</p>
+\end{equation}</script>
+
+<p>We used CVX to solve this equation, the result is the same as we did in <a href="/main/2017/06/07/model-based-method.html">Model-based Methods</a>. Below shows the outputs of CVX after successfully sovled our value iteration problem:</p>
 <div class="fig figcenter fighighlight">
   <img src="http://github.com/pages/keeperovswords/ReinforcementLearning.github.io/assets/cvxvi.png" width="75%" />
   <div class="figcaption">The result of CVX for solving VI</div>
 </div>
 
 <p>Let’s continuously go along this way straight to find the approximate linear programming. In linear function approximation settings the state value is represented by a linear combination of its features and the weight of features correspondingly. As it changes, so the VI function has been also changed accordingly:
-\begin{equation}
+<script type="math/tex">\begin{equation}
 \min_{V,r} {d}^T  {\phi} {r} \ s.t. {\phi r} \ge T ({\phi r}), \ V = {\phi r}
-\end{equation}
-After all substitutions we got this optimization problem:
-\begin{equation}
-	\begin{split}
-		\min_r \sum_{s\in S}d(s) \sum_{i}\phi_i(s) r_i <br />
-		s.t. \forall s \in S, a: <br />
-	\end{split}
-\end{equation}</p>
+\end{equation}</script>
+After all substitutions we got this optimization problem:</p>
 
-<p>\begin{equation}
+<script type="math/tex; mode=display">\begin{equation}
+	\begin{split}
+		\min_r \sum_{s\in S}d(s) \sum_{i}\phi_i(s) r_i \\
+		s.t. \forall s \in S, a: \\
+	\end{split}
+\end{equation}</script>
+
+<script type="math/tex; mode=display">\begin{equation}
 \sum_{i}\phi_i(s) r_i \ge \sum_{s^\prime} p(s^\prime|s, a)\left[ r(s, a,s^\prime) + \gamma \sum_{j} \phi_j(s^\prime) r_j \right]
-\end{equation}</p>
+\end{equation}</script>
 
 <p>That’s the basic idea of finding a optimal policy in a finite state problem by using approximate linear programming. It works sometime astonishing good and sometiem quite in opposite. The feature extract plays a critical role.</p>
 
