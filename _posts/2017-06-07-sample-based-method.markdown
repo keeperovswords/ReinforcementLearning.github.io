@@ -17,9 +17,7 @@ Temporal-Difference Learning (TD-Learning) is a combination of MC-method and dyn
 $$V(S_t) \leftarrow V(S_t) + \alpha \left[ R_{t+1} + \gamma V(S_{t+1} - V(S_t)) \right]$$
 
 If we apply this TD method to action values, we get SARSA method,
-\begin{equation}
-	Q(S_t, A_t)= Q(S_t, A_t) + \alpha \left[  R_{t+1} + \gamma Q(S_{t+1} - Q(S_t)) \right]
-\end{equation} which uses only the five tuples $$S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1}$$. That's why it's called SARSA.
+	$$Q(S_t, A_t)= Q(S_t, A_t) + \alpha \left[  R_{t+1} + \gamma Q(S_{t+1} - Q(S_t)) \right]$$ which uses only the five tuples $$S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1}$$. That's why it's called SARSA.
 
 Q-Learning is another kind of TD-Learning. It approximates the optimal $$q_\star$$ directly by learning the action value function independent the policy being followed. So it's an off-policy TD control approach. As we said, the most amazing part or TD is it benefits one side from MC-method, it also bootstrap itself by considering the past experiences. Therefore there are two sides should be considered accordingly, the exploration and the exploitation. Exploration focus much more on to explore the unknown states, whereas exploitation thinks much heavily about using the current estimates greedily. For exploration we have i.g. $$\epsilon-$$ greedy policy. With given exploration probability $$\epsilon$$ we select some action in current state randomly and with $$1-\epsilon$$ we just follow the current policy. In an non-deterministic MDPs play the noise a critical role. Noise means how uncertain than the agent gets a successor state after taking an action in current state. When the noise is quite big in your environment, it'd be quite if you use a better exploration policy. 
 
