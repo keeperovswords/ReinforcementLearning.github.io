@@ -48,15 +48,15 @@
 <h2>Linear Function Approximation</h2>
 <p>In function approximation schema we don’t use the state directly, instead we use the feature-based state representation information, so the states can be represented as feature vectors. Each element of this vector represents a special feature in game state, such as the distance to ghost,  number of ghost etc. Under this settings we can rewrite our action value function as:</p>
 
-<script type="math/tex; mode=display">\begin{equation}
-Q(s,a) = w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a) = \sum_{i=1}^{n} w_i f_i(s,a)
-\end{equation}</script>
+<script type="math/tex; mode=display">% <![CDATA[
+\begin{align}
+Q(s,a) &= w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a)\\ &= \sum_{i=1}^{n} w_i f_i(s,a)
+\end{align} %]]></script>
 
-<p>and the state value  as:</p>
-
-<script type="math/tex; mode=display">\begin{equation}
+<p>and the state value  as:
+<script type="math/tex">\begin{equation}
 v(s) = \sum_{i=1}^{n} w_i f_i(s)
-\end{equation}</script>
+\end{equation}</script></p>
 
 <p>In the normal Q-learning the action value in state <script type="math/tex">s</script> with action <script type="math/tex">a</script> updated as <script type="math/tex">Q(s,a) \leftarrow Q(s,a) + \alpha \times \delta</script>,where <script type="math/tex">\delta</script> the temporal different defined as</p>
 

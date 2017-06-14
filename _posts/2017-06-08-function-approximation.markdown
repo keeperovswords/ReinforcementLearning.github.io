@@ -25,12 +25,11 @@ Here we used six tilings. Each small cell is noted as <strong>tile</strong>. The
 <h2>Linear Function Approximation</h2>
 In function approximation schema we don't use the state directly, instead we use the feature-based state representation information, so the states can be represented as feature vectors. Each element of this vector represents a special feature in game state, such as the distance to ghost,  number of ghost etc. Under this settings we can rewrite our action value function as:
 
-$$\begin{equation}
-Q(s,a) = w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a) = \sum_{i=1}^{n} w_i f_i(s,a)
-\end{equation}$$
+$$\begin{align}
+Q(s,a) &= w_1 f_1(s,a) + w_2 f_2(s,a) +\dots + w_n f_n(s,a)\\ &= \sum_{i=1}^{n} w_i f_i(s,a)
+\end{align}$$
 
 and the state value  as:
-
 $$\begin{equation}
 v(s) = \sum_{i=1}^{n} w_i f_i(s)
 \end{equation}$$
